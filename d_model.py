@@ -5,7 +5,7 @@ from sklearn.tree import DecisionTreeClassifier as DTC
 class Model():
     def __init__(self,**kwargs):
         #模型初始化
-        self.model = DTC(criterion='entropy',max_depth=5)  # 基于信息熵
+        self.model = DTC(criterion='entropy',splitter="best",max_depth=5)  # 基于信息熵
     def train(self,X,y):
         ##模型构建
         self.model.fit(X,y.astype('str'))
@@ -19,7 +19,6 @@ class preparation():
         self.write_data_file = "E:\pythonWorkSpace\BigDataHomework/d_train_afterclear.csv"
     def clear(self):
         # 读取csv文件并获取所有的表头
-        # fd = open(self.data_score_file)
         df = pd.read_csv(self.data_source_file,encoding='gbk')
         cols = df.columns.values
         # 获取所有的数据并转为二维数组的形式
@@ -66,7 +65,6 @@ if __name__=='__main__':
     pre = preparation()
     pre.clear()
     data_source_file = "E:\pythonWorkSpace\BigDataHomework/d_train_afterclear.csv"
-    write_data_file = "E:\pythonWorkSpace\BigDataHomework/d_train_aftertrain.csv"
     df = pd.read_csv(data_source_file, encoding='gbk')
     cols = list(df.columns.values)
     cols.remove('血糖')
@@ -86,5 +84,5 @@ if __name__=='__main__':
     y_test = np.array(y_test)
     for i in range(len(y_test)):
         sum = sum + (pred_y[i]-y_test[i])**2
-    sum = sum/len(pred_y)
+    sum = sum/(2*len(pred_y))
     print(sum)
