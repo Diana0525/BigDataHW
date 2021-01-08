@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier as DTC
 import sys
-# import matplotlib.pyplot as plt
+from sklearn import metrics
+import matplotlib.pyplot as plt
 
 class Model():
     def __init__(self,**kwargs):
@@ -20,8 +21,8 @@ class preparation():
         self.data_source_file = "E:\pythonWorkSpace\BigDataHomework/f_train.csv"
         self.write_data_file = "E:\pythonWorkSpace\BigDataHomework/f_train_afterclear.csv"
     def clear(self):
-        print(sys.argv)
-        df = pd.read_csv(sys.argv[1], encoding='gbk')
+        # df = pd.read_csv(sys.argv[1], encoding='gbk')
+        df = pd.read_csv(self.data_source_file, encoding='gbk')
         cols = df.columns.values
         # 获取所有的数据并转为二维数组的形式
         datas = []
@@ -98,4 +99,22 @@ if __name__=='__main__':
     R = a/c
     F1 = (2*P*R)/(P+R)
     print(F1)
-
+    #绘制算法性能曲线图
+    y_test = np.array(y_test) #实际值
+    pred_y = np.array(pred_y)
+    #计算相关数据
+    fpr, tpr, thresholds = metrics.roc_curve(y_test, pred_y, pos_label=1)
+    ## 计算曲线下面积
+    roc_auc = metrics.auc(fpr, tpr)
+    print(fpr)
+    print(tpr)
+    ## 绘图
+    plt.clf()
+    plt.plot(fpr, tpr, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.0])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.legend(loc="lower right")
+    plt.show()

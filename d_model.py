@@ -1,11 +1,18 @@
 import numpy as np
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier as DTC
+from sklearn import linear_model
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.svm import SVR
+from sklearn.ensemble import GradientBoostingRegressor
+import matplotlib.pyplot as plt
+
 
 class Model():
     def __init__(self,**kwargs):
         #模型初始化
-        self.model = DTC(criterion='entropy',splitter="best",max_depth=5)  # 基于信息熵
+        # self.model = GradientBoostingRegressor()
+        self.model = linear_model.LinearRegression()
+        # self.model = DTC(criterion='entropy',splitter="best",max_depth=5)  # 基于信息熵
     def train(self,X,y):
         ##模型构建
         self.model.fit(X,y.astype('str'))
@@ -71,18 +78,27 @@ if __name__=='__main__':
     X = df[cols]
     y = df[['血糖']]
     # 划分训练集与测试集
-    X_train = X[:4000]
-    y_train = y[:4000]
-    X_test = X[4000:len(df)]
-    y_test = y[4000:len(df)]
+    X_train = X[:5000]
+    y_train = y[:5000]
+    X_test = X[5000:len(df)]
+    y_test = y[5000:len(df)]
 
     model=Model()
     model.train(X_train,y_train)
     pred_y=model.predict(X_test)
     ##计算损失函数
     sum = 0
-    y_test = np.array(y_test)
+    y_test = np.array(y_test).flatten()
     for i in range(len(y_test)):
         sum = sum + (pred_y[i]-y_test[i])**2
     sum = sum/(2*len(pred_y))
     print(sum)
+
+    #绘制算法性能曲线图
+    y_test = np.array(list(y_test)) #实际值
+    pred_y = np.array(list(pred_y))
+    plt.figure(figsize=(10,3))
+    plt.plot(y_test, color='green', label='y_test')
+    plt.plot(pred_y, color = 'red', label='pred_y')
+    plt.legend()
+    plt.show()
